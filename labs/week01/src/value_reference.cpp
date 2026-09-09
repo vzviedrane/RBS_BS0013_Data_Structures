@@ -1,6 +1,6 @@
 #include <iostream>
 
-void increment(int x) {
+void increment(int& x) {
     ++x;
 }
 
