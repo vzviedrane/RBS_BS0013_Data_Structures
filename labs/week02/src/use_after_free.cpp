@@ -7,5 +7,7 @@ int main() {
     // Intentionally invalid for the AddressSanitizer exercise.
     std::cout << *p << '\n';
 
-    // TODO: In a comment, describe a correct lifetime/ownership repair.
+    // Correct repair - do not dereference p after delete.
+    // After delete, the object no longer exists and p is dangling.
+    // If the pointer is no longer needed, set p = nullptr.
 }

@@ -7,8 +7,8 @@ int main() {
     *p = 100;
     std::cout << "changed = " << *p << '\n';
 
-    // TODO: release the allocation exactly once.
-    // TODO: after release, make p explicitly represent no object.
-
+    delete p;
+    p = nullptr;
+    
     return 0;
 }

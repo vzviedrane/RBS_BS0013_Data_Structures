@@ -20,6 +20,8 @@ int main() {
 
     // TODO: Explain why dangling must not be dereferenced here.
     // Do not add: std::cout << *dangling;
+    // because temporary's lifetime ended when the inner scope finished.
+    // dangling still contains the old address, but there is no live object there anymore.
 
     dangling = nullptr;
     std::cout << "dangling reset to null: " << (dangling == nullptr) << '\n';
