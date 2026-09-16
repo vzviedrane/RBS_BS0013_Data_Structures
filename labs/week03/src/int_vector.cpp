@@ -1,30 +1,52 @@
 #include "int_vector.hpp"
 
-#include <stdexcept>
 
 IntVector::~IntVector() {
-    // TODO: release the owned array exactly once.
+    delete[] data_;
 }
 
-IntVector::IntVector(const IntVector& other) {
-    (void)other;
-    // TODO: allocate independent storage and copy the logical elements.
-    throw std::logic_error("TODO: implement IntVector copy construction");
-}
+IntVector::IntVector(const IntVector& other)
+    : size_(other.size_), capacity_(other.capacity_) {
+
+        if(capacity_ > 0){
+            data_ = new int[capacity_];
+
+            for(std::size_t i = 0; i < size_; ++i){
+                data_[i] = other.data_[i];
+            }
+        }
+        check_invariant();
+    }
 
 void IntVector::check_invariant() const {
-    // TODO: assert the Week 3 representation invariants.
+    assert(size_ <= capacity_);
+    assert((capacity_ == 0) == (data_ == nullptr));
 }
 
 void IntVector::grow() {
-    // TODO: geometric growth policy: 0 -> 1, otherwise double capacity.
-    // Preserve size_ and all existing logical elements.
-    throw std::logic_error("TODO: implement IntVector::grow");
+    std::size_t new_capacity = (capacity_ == 0) ? 1 : capacity_ * 2;
+
+    int* new_data = new int[new_capacity];
+
+    for (std::size_t i =0; i < size_; ++i) {
+        new_data[i] = data_[i];
+    }
+
+    delete[] data_;
+
+    data_ = new_data;
+    capacity_ = new_capacity;
+
+    check_invariant();
 }
 
 void IntVector::push_back(int value) {
-    (void)value;
-    // TODO: grow only when size_ == capacity_, append, update size_,
-    // and finish in a valid representation state.
-    throw std::logic_error("TODO: implement IntVector::push_back");
+    if(size_ == capacity_) {
+        grow();
+    }
+
+    data_[size_] = value;
+    ++size_;
+
+    check_invariant();
 }
