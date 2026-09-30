@@ -3,12 +3,6 @@
 #include <cassert>
 #include <stdexcept>
 
-namespace {
-[[noreturn]] void todo(const char* operation) {
-    throw std::logic_error(operation);
-}
-}  // namespace
-
 IntCircularQueue::IntCircularQueue(std::size_t capacity)
     : data_(capacity) {
     assert(capacity > 0);
@@ -32,39 +26,74 @@ std::size_t IntCircularQueue::capacity() const {
 }
 
 int& IntCircularQueue::front() {
-    todo("TODO: implement front()");
+    if(empty()){
+        throw std::out_of_range("front() on empty queue");
+    }
+
+    return data_[front_];
 }
 
 const int& IntCircularQueue::front() const {
-    todo("TODO: implement front() const");
+    if(empty()){
+        throw std::out_of_range("front() on empty queue");
+    }
+
+    return data_[front_];
 }
 
 int& IntCircularQueue::back() {
-    todo("TODO: implement back()");
+    if(empty()){
+        throw std::out_of_range("back() on empty queue");
+    }
+    return data_[physical_index(size_ - 1)];
 }
 
 const int& IntCircularQueue::back() const {
-    todo("TODO: implement back() const");
+    if(empty()){
+        throw std::out_of_range("back() on empty queue");
+    }
+    return data_[physical_index(size_ - 1)];
 }
 
 void IntCircularQueue::enqueue(int value) {
-    (void)value;
-    todo("TODO: implement enqueue()");
+    if(full()){
+        throw std::overflow_error("enqueue() on full queue");
+    }
+    std::size_t index = (front_ +size_) % data_.size();
+    data_[index] = value;
+
+    ++size_;
+    check_invariant();
 }
 
 void IntCircularQueue::dequeue() {
-    todo("TODO: implement dequeue()");
+    if(empty()){
+        throw std::out_of_range("dequeue() on empty queue");
+    }
+
+    front_ = (front_ + 1) % data_.size();
+    --size_;
+
+    if(size_ == 0){
+        front_ = 0;
+    }
+    check_invariant();
 }
 
 void IntCircularQueue::clear() {
-    todo("TODO: implement clear()");
+    front_ = 0;
+    size_ = 0;
+
+    check_invariant();
 }
 
 std::size_t IntCircularQueue::physical_index(std::size_t logical_index) const {
-    (void)logical_index;
-    todo("TODO: implement physical_index()");
+    assert(logical_index < size_);
+    return(front_ + logical_index) % data_.size();
 }
 
 void IntCircularQueue::check_invariant() const {
-    todo("TODO: implement check_invariant()");
+    assert(!data_.empty());
+    assert(size_ <= data_.size());
+    assert(front_ < data_.size());
 }
