@@ -62,11 +62,43 @@ void test_duplicates() {
     assert(heap.check_invariant());
 }
 
+void test_negative_values() {
+    BinaryHeap<int> heap(std::vector<int>{-10, -3, -20, -1});
+
+    assert(heap.check_invariant());
+    assert(heap.top() == -1);
+
+    heap.pop();
+
+    assert(heap.top() == -3);
+    assert(heap.check_invariant());
+}
+
+void test_push_and_pop() {
+    BinaryHeap<int> heap;
+
+    heap.push(10);
+    heap.push(30);
+    heap.push(20);
+
+    assert(heap.top() == 30);
+    assert(heap.check_invariant());
+
+    heap.pop();
+    assert(heap.top() == 20);
+
+    heap.push(40);
+    assert(heap.top() == 40);
+    assert(heap.check_invariant());
+}
+
 int main() {
     test_empty_and_single_value();
     test_sift_up();
     test_sift_down_and_priority_order();
     test_duplicates();
+    test_negative_values();
+    test_push_and_pop();
 
     std::cout << "Week 8 public tests passed.\n";
 }
