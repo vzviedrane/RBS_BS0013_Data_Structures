@@ -2,6 +2,7 @@
 #include <cassert>
 #include <iostream>
 #include <vector>
+#include <climits>
 
 void test_empty_singleton() {
     IntBST t;
@@ -30,9 +31,38 @@ void test_degenerate_height() {
     for (int x = 1; x <= 7; ++x) assert(t.insert(x));
     assert(t.height() == 7 && t.check_invariant());
 }
+void test_delete_root_with_one_child(){
+    IntBST t;
+
+    assert(t.insert(10));
+    assert(t.insert(5));
+
+    assert(t.erase(10));
+    assert(!t.contains(10));
+    assert(t.contains(5));
+    assert(t.size() == 1);
+    assert(t.height() == 1);
+    assert(t.check_invariant());
+}
+void test_duplicates_and_extreme_keys(){
+    IntBST t;
+
+    assert(t.insert(0));
+    assert(t.insert(INT_MIN));
+    assert(t.insert(INT_MAX));
+
+    assert(!t.insert(0));
+    assert(!t.insert(INT_MIN));
+
+    assert(t.size() == 3);
+    assert((t.inorder() == std::vector<int>{INT_MIN, 0, INT_MAX}));
+    assert(t.check_invariant());
+}
 int main() {
     test_empty_singleton();
     test_search_and_deletion();
     test_degenerate_height();
+    test_delete_root_with_one_child();
+    test_duplicates_and_extreme_keys();
     std::cout << "Week 9 public tests passed.\n";
 }
