@@ -31,20 +31,66 @@ std::vector<int> IntAVL::inorder() const {
 }
 bool IntAVL::insert(int key) { return insert_at(root_, key); }
 void IntAVL::refresh(Node* p) noexcept {
-    // TODO 1: cache the correct subtree height.
-    (void)p;
+    if(p == nullptr){
+        return;
+    }
+
+    int left_height = p->left ? p->left->height : 0;
+    int right_height = p->right ? p->right->height : 0;
+
+    p->height = 1 + std::max(left_height, right_height);
 }
 void IntAVL::rotate_left(Node*& link) noexcept {
-    // TODO 2: preserve the middle subtree, rewire and refresh heights.
-    (void)link;
+    Node* pivot = link->right;
+    Node* middle = pivot->left;
+
+    pivot->left = link;
+    link->right = middle;
+
+    refresh(link);
+    refresh(pivot);
+
+    link = pivot;
 }
 void IntAVL::rotate_right(Node*& link) noexcept {
-    // TODO 3: mirror the left rotation.
-    (void)link;
+    Node* pivot = link->left;
+    Node* middle = pivot->right;
+
+    pivot->right = link;
+    link->left = middle;
+
+    refresh(link);
+    refresh(pivot);
+
+    link = pivot;
 }
 void IntAVL::rebalance(Node*& link) noexcept {
-    // TODO 4: distinguish LL, RR, LR and RL using balance factors.
-    (void)link;
+    int left_height = link->left ? link->left->height : 0;
+    int right_height = link->right ? link->right->height : 0;
+    int balance = left_height - right_height;
+
+    if (balance > 1){
+        Node* child = link->left;
+
+        int child_left = child->left ? child->left->height : 0;
+        int child_right = child->right ? child->right->height : 0;
+
+        if (child_right > child_left){
+            rotate_left(link->left);
+        }
+
+        rotate_right(link);
+    }else if(balance < -1){
+        Node* child = link->right;
+
+        int child_left = child->left ? child->left->height : 0;
+        int child_right = child->right ? child->right->height : 0;
+
+        if(child_left > child_right){
+            rotate_right(link->right);
+        }
+        rotate_left(link);
+    }
 }
 bool IntAVL::insert_at(Node*& link, int key) {
     if (!link) {
@@ -71,10 +117,15 @@ bool IntAVL::validate(const Node* p, std::optional<int> lo,
         !validate(p->right, p->key, hi, count, right_height)) return false;
     actual_height = 1 + std::max(left_height, right_height);
     // TODO 5: check stored height and local AVL balance bound.
-    (void)actual_height;
-    (void)left_height;
-    (void)right_height;
-    return false;
+    if(p->height != actual_height){
+        return false;
+    }
+
+    if(std::abs(left_height - right_height) > 1){
+        return false;
+    }
+
+    return true;
 }
 bool IntAVL::check_invariant() const noexcept {
     std::size_t count = 0;

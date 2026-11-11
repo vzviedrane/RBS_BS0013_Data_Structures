@@ -17,6 +17,37 @@ void check_case(std::vector<int> keys, std::vector<int> expected) {
     for (int key : expected) assert(tree.contains(key));
     assert(!tree.contains(999));
 }
+void test_rotation_with_middle_subtree() {
+    IntAVL tree;
+
+    for (int key : {20, 10, 40, 30, 50, 25}) {
+        assert(tree.insert(key));
+        assert(tree.check_invariant());
+    }
+
+    assert((tree.inorder() == std::vector<int>{10, 20, 25, 30, 40, 50}));
+    assert(tree.size() == 6);
+    assert(tree.height() == 3);
+
+    for (int key : {10, 20, 25, 30, 40, 50}) {
+        assert(tree.contains(key));
+    }
+}
+void test_negative_keys_and_duplicates() {
+    IntAVL tree;
+
+    for (int key : {-10, -20, -5, -15, -30}) {
+        assert(tree.insert(key));
+        assert(tree.check_invariant());
+    }
+
+    assert(!tree.insert(-20));
+    assert(!tree.insert(-10));
+
+    assert(tree.size() == 5);
+    assert((tree.inorder() == std::vector<int>{-30, -20, -15, -10, -5}));
+    assert(tree.check_invariant());
+}
 int main() {
     IntAVL empty;
     assert(empty.check_invariant() && empty.height() == 0);
@@ -42,5 +73,7 @@ int main() {
         assert(stress.check_invariant());
     }
     assert(stress.inorder()==std::vector<int>(oracle.begin(),oracle.end()));
+    test_rotation_with_middle_subtree();
+    test_negative_keys_and_duplicates();
     std::cout << "Week 10 AVL tests passed\n";
 }
